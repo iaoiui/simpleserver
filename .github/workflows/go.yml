@@ -40,10 +40,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v2
+        env:
+          TAG: $(echo $GITHUB_REF | grep -o "[0-9][\.].*")
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/simpleserver:$(echo $GITHUB_REF | grep -o "[0-9][\.].*")
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/simpleserver:$TAG
 #    runs-on: ubuntu-latest
 #    env:
 #      DOCKER_IMAGE_NAME: simpleserver

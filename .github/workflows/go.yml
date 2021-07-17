@@ -38,20 +38,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: my-docker-hub-namespace/my-docker-hub-repository
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Build and push
         uses: docker/build-push-action@v2
-#        env:
-#          TAG: ${(echo $GITHUB_REF | grep -o "[0-9][\.].*")}
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/simpleserver:${{ steps.extract_branch.outputs.branch }}
 #    runs-on: ubuntu-latest
 #    env:
 #      DOCKER_IMAGE_NAME: simpleserver
